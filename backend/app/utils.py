@@ -48,3 +48,8 @@ def extract_variables(content: str) -> List[str]:
     import re
     pattern = r'\{\{(\w+)\}\}'
     return re.findall(pattern, content)
+
+
+def sort_prompts_by_date(prompts: list, descending: bool = True):
+    """Sort prompts by updated_at timestamp."""
+    return sorted(prompts, key=lambda p: p.updated_at, reverse=descending)
