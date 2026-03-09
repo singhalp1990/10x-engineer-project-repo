@@ -1,4 +1,3 @@
-# API Reference
 # API Reference for PromptLab
 
 This document provides details about the API endpoints available in the PromptLab application.

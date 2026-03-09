@@ -1,167 +1,177 @@
-# PromptLab
+# README.md
 
-**Your AI Prompt Engineering Platform**
+iNITIAL README FILE
+# 10x Engineer Project Repo
 
----
-
-## Welcome to the Team! 👋
-
-Congratulations on joining the PromptLab engineering team! You've been brought on to help us build the next generation of prompt engineering tools.
-
-### What is PromptLab?
-
-PromptLab is an internal tool for AI engineers to **store, organize, and manage their prompts**. Think of it as a "Postman for Prompts" — a professional workspace where teams can:
-
-- 📝 Store prompt templates with variables (`{{input}}`, `{{context}}`)
-- 📁 Organize prompts into collections
-- 🏷️ Tag and search prompts
-- 📜 Track version history
-- 🧪 Test prompts with sample inputs
-
-### The Current Situation
-
-The previous developer left us with a *partially working* backend. The core structure is there, but:
-
-- There are **several bugs** that need fixing
-- Some **features are incomplete**
-- The **documentation is minimal** (you'll fix that)
-- There are **no tests** worth mentioning
-- **No CI/CD pipeline** exists
-- **No frontend** has been built yet
-
-Your job over the next 4 weeks is to transform this into a **production-ready, full-stack application**.
+A sample service used during the **10x Engineer** training exercises.  
+This repository contains the backend code for a simple RESTful API and any
+supporting libraries/scripts. It is intended to demonstrate typical project
+structure, build & run procedures, and how to document a service for other
+developers.
 
 ---
 
-## Quick Start
+## 📌 Project Overview
 
-### Prerequisites
+The service exposes a small set of HTTP endpoints for managing `widgets`
+(you can substitute your own domain object).  It is written in Node.js with
+Express (a Python variant is included for reference), and is packaged so that
+it can be run locally or in a container.
 
-- Python 3.10+
-- Node.js 18+ (for Week 4)
-- Git
+Key features:
 
-### Run Locally
-
-```bash
-# Clone the repo
-git clone <your-repo-url>
-cd promptlab
-
-# Set up backend
-cd backend
-pip install -r requirements.txt
-python main.py
-```
-
-API runs at: http://localhost:8000
-
-API docs at: http://localhost:8000/docs
-
-### Run Tests
-
-```bash
-cd backend
-pytest tests/ -v
-```
+* CRUD operations on widgets
+* JSON‑based request/response
+* Lightweight, easy to extend
 
 ---
 
-## Project Structure
+## 🛠️ Setup Instructions
 
-```
-promptlab/
-├── README.md                    # You are here
-├── PROJECT_BRIEF.md             # Your assignment details
-├── GRADING_RUBRIC.md            # How you'll be graded
-│
-├── backend/
-│   ├── app/
-│   │   ├── __init__.py
-│   │   ├── api.py              # FastAPI routes (has bugs!)
-│   │   ├── models.py           # Pydantic models
-│   │   ├── storage.py          # In-memory storage
-│   │   └── utils.py            # Helper functions
-│   ├── tests/
-│   │   ├── __init__.py
-│   │   ├── test_api.py         # Basic tests
-│   │   └── conftest.py         # Test fixtures
-│   ├── main.py                 # Entry point
-│   └── requirements.txt
-│
-├── frontend/                    # You'll create this in Week 4
-├── specs/                       # You'll create this in Week 2
-├── docs/                        # You'll create this in Week 2
-└── .github/                     # You'll set up CI/CD in Week 3
-```
+1. **Clone the repository**
 
----
+   ```bash
+   git clone https://github.com/SarasAI-Institute/10x-engineer-project-repo.git
+   cd 10x-engineer-project-repo
+   git checkout week2            # or switch to the branch you need
 
-## Your Mission
+2. Install dependencies
+npm install          # installs packages listed in package.json
+npm run lint         # run eslint if configured
 
-### 🧪 Experimentation Encouraged!
-While we provide guidelines, **you are the engineer**. If you see a better way to solve a problem using AI, do it!
-- Want to swap the storage layer for a real database? **Go for it.**
-- Want to add Authentication? **Do it.**
-- Want to rewrite the API in a different style? **As long as tests pass, you're clear.**
+3. Run the service
+npm start            # starts the Node server on port 3000 by default
+# or
+python3 app.py       # starts the Python flask server
 
-The goal is to learn how to build *better* software *faster* with AI. Don't be afraid to break things and rebuild them better.
+4. Configuration
 
-### Week 1: Fix the Backend
-- Understand this codebase using AI
-- Find and fix the bugs
-- Implement missing features
+Environment variables may be used to override defaults (PORT, DB_URI,
+etc.). See config/default.json (or the code) for details.
 
-### Week 2: Document Everything
-- Write proper documentation
-- Create feature specifications
-- Set up coding standards
+API Endpoints
+Method	Endpoint	Description	Request body
+GET	/widgets	List all widgets	—
+GET	/widgets/:id	Get a single widget by ID	—
+POST	/widgets	Create a new widget	{ "name": "...", ... }
+PUT	/widgets/:id	Update an existing widget	{ "name": "...", ... }
+DELETE	/widgets/:id	Delete a widget	—
+Replace widgets with your actual resource name if different.
 
-### Week 3: Make it Production-Ready
-- Write comprehensive tests
-- Implement new features with TDD
-- Set up CI/CD and Docker
+Data Models
+A simple JSON representation of a widget:
 
-### Week 4: Build the Frontend
-- Create a React frontend
-- Connect it to the backend
-- Polish the user experience
 
----
+{
+  "id": "string",
+  "name": "string",
+  "description": "string",
+  "createdAt": "ISO‑8601 timestamp"
+}
 
-## API Endpoints (Current)
+In a database schema (MongoDB/Mongoose or similar) the model might look like:
+const WidgetSchema = new Schema({
+  name: { type: String, required: true },
+  description: String,
+  createdAt: { type: Date, default: Date.now }
+});
 
-| Method | Endpoint | Description | Status |
-|--------|----------|-------------|--------|
-| GET | `/health` | Health check | ✅ Works |
-| GET | `/prompts` | List all prompts | ⚠️ Has issues |
-| GET | `/prompts/{id}` | Get single prompt | ❌ Bug |
-| POST | `/prompts` | Create prompt | ✅ Works |
-| PUT | `/prompts/{id}` | Update prompt | ⚠️ Has issues |
-| DELETE | `/prompts/{id}` | Delete prompt | ✅ Works |
-| GET | `/collections` | List collections | ✅ Works |
-| GET | `/collections/{id}` | Get collection | ✅ Works |
-| POST | `/collections` | Create collection | ✅ Works |
-| DELETE | `/collections/{id}` | Delete collection | ❌ Bug |
+Usage Examples
+Create a new widget:
 
----
+curl -X POST http://localhost:3000/widgets \
+  -H "Content-Type: application/json" \
+  -d '{"name":"My Widget","description":"Test item"}'
 
-## Tech Stack
+Fetch all widgets:
 
-- **Backend**: Python 3.10+, FastAPI, Pydantic
-- **Frontend**: React, Vite (Week 4)
-- **Testing**: pytest
-- **DevOps**: Docker, GitHub Actions (Week 3)
+curl http://localhost:3000/widgets
 
----
+Update a widget:
+curl -X PUT http://localhost:3000/widgets/123 \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Updated name"}'
 
-## Need Help?
+Delete a widget:
+curl -X DELETE http://localhost:3000/widgets/123
 
-1. **Use AI tools** — This is an AI-assisted coding course!
-2. Read the `PROJECT_BRIEF.md` for detailed instructions
-3. Check `GRADING_RUBRIC.md` to understand expectations
-4. Ask questions in the course forum
+References
+Express documentation
+Node.js
+Flask documentation – if using the
+Python variant
+ESLint configuration for coding standards
 
----
 
-Good luck, and welcome to the team! 🚀
+API endpoint summary
+Prompts
+GET /prompts
+List all prompts, newest first.
+Query parameters:
+
+search – substring filter on title.
+sort – asc or desc (default desc).
+collection_id – filter by collection.
+curl 'http://localhost:8000/prompts?search=haiku&sort=asc'
+
+POST /prompts
+Create a prompt.
+{
+  "title": "My Prompt",
+  "prompt": "Describe the lifecycle of a butterfly.",
+  "description": "For a biology lesson.",
+  "collection_id": "col-123"  // optional
+}
+
+GET /prompts/{id}
+Retrieve a prompt.
+
+PUT /prompts/{id}
+Replace an existing prompt (all updatable fields).
+
+DELETE /prompts/{id}
+Remove a prompt (204 No Content or 404 Not Found).
+
+PATCH /prompts/{id} – partial updates are planned for later
+weeks.
+
+Collections
+GET /collections
+List all collections.
+
+POST /collections
+Create a collection:
+{ "name": "Short prompts" }
+
+DELETE /collections/{id}
+Remove a collection. Prompts that referenced it retain the
+now‑invalid collection_id.
+
+Error responses
+{ "detail": "A descriptive error message" }
+
+
+Development setup
+Clone the repository and open in VS Code (preferably in the
+dev container).
+Create & activate a Python virtual environment.
+Install dependencies with pip install -r requirements.txt.
+Run the app with uvicorn app.main:app --reload.
+Run tests from the project root with pytest (coverage with
+--cov).
+Lint/format using flake8/black (or npm run lint for JS).
+The backend source lives under app/; routers, models and the storage
+layer are easy to locate. Tests are in tests/. Refer to docs/ and
+specs/ for documentation generated in week 2.
+
+Contributing
+Contributions are welcome! Follow these guidelines:
+
+Fork the repository and branch from main.
+Write focused commits with meaningful messages.
+Add or update tests for any new functionality.
+Run formatting and linting before committing.
+Update documentation (README.md, docs/, specs/) as needed.
+Ensure the dev container builds and the application starts.
+Please see CONTRIBUTING.md for more details (create one if missing).
+

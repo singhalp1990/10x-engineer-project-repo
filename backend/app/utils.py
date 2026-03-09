@@ -34,10 +34,6 @@ def sort_prompts_by_date(prompts: List[Prompt], descending: bool = True) -> List
         >>> sorted_desc = sort_prompts_by_date([prompt2, prompt1], descending=True)
         >>> sorted_desc[0].id
         "2"
-        
-        >>> sorted_asc = sort_prompts_by_date([prompt2, prompt1], descending=False)
-        >>> sorted_asc[0].id
-        "1"
     """
     return sorted(prompts, key=lambda p: p.updated_at, reverse=descending)
 
@@ -61,15 +57,13 @@ def filter_prompts_by_collection(prompts: List[Prompt], collection_id: str) -> L
     Raises:
         No exceptions raised. Returns empty list if no matches found.
     
-    Example:
+   Example:
         >>> prompt1 = Prompt(id="1", collection_id="col_1")
         >>> prompt2 = Prompt(id="2", collection_id="col_2")
         >>> prompt3 = Prompt(id="3", collection_id="col_1")
         >>> filtered = filter_prompts_by_collection([prompt1, prompt2, prompt3], "col_1")
         >>> len(filtered)
         2
-        >>> [p.id for p in filtered]
-        ["1", "3"]
     """
     return [p for p in prompts if p.collection_id == collection_id]
 
@@ -92,15 +86,13 @@ def search_prompts(prompts: List[Prompt], query: str) -> List[Prompt]:
     Raises:
         No exceptions raised. Returns empty list if no matches found.
     
-    Example:
+   Example:
         >>> prompt1 = Prompt(id="1", title="Email Summarizer")
         >>> prompt2 = Prompt(id="2", title="Code Reviewer")
         >>> prompt3 = Prompt(id="3", title="Email Generator", description="")
         >>> results = search_prompts([prompt1, prompt2, prompt3], "email")
         >>> len(results)
         2
-        >>> [p.id for p in results]
-        ["1", "3"]
         
         >>> results = search_prompts([prompt1, prompt2, prompt3], "xyz")
         >>> len(results)

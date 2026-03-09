@@ -61,6 +61,16 @@ class PromptBase(BaseModel):
         content: The prompt template content (minimum 1 character).
         description: Optional detailed description of the prompt.
         collection_id: Optional ID linking prompt to a collection.
+        
+    Example:
+        >>> prompt = PromptBase(
+        ...     title="Python Tips",
+        ...     content="Write a Python function that...",
+        ...     description="Basic Python prompt",
+        ...     collection_id=None
+        ... )
+        >>> prompt.title
+        'Python Tips'
     """
     title: str = Field(..., min_length=1, max_length=200)
     content: str = Field(..., min_length=1)
@@ -76,6 +86,14 @@ class PromptCreate(PromptBase):
     
     This model ensures that required fields are provided and optional
     fields meet their constraints before database insertion.
+    
+    Example:
+        >>> prompt_data = PromptCreate(
+        ...     title="New Prompt",
+        ...     content="Prompt content here"
+        ... )
+        >>> isinstance(prompt_data, PromptBase)
+        True
     """
     pass
 
@@ -88,6 +106,14 @@ class PromptUpdate(PromptBase):
     
     Note: This model requires all fields from PromptBase. For partial
     updates, only provided fields should be applied to existing records.
+    
+    Example:
+        >>> update_data = PromptUpdate(
+        ...     title="Updated Title",
+        ...     content="Updated content"
+        ... )
+        >>> update_data.title
+        'Updated Title'
     """
     pass
 
@@ -100,8 +126,22 @@ class Prompt(PromptBase):
     
     Attributes:
         id: Unique identifier auto-generated using UUID4.
-        created_at: Timestamp when the prompt was first created.
-        updated_at: Timestamp when the prompt was last modified.
+        created_at: Timestamp when the prompt was first created (UTC).
+        updated_at: Timestamp when the prompt was last modified (UTC).
+        title: The title of the prompt (1-200 characters).
+        content: The prompt template content (minimum 1 character).
+        description: Optional detailed description of the prompt.
+        collection_id: Optional ID linking prompt to a collection.
+        
+    Example:
+        >>> prompt = Prompt(
+        ...     title="Example",
+        ...     content="Content here"
+        ... )
+        >>> len(prompt.id) > 0
+        True
+        >>> isinstance(prompt.created_at, datetime)
+        True
     """
     id: str = Field(default_factory=generate_id)
     created_at: datetime = Field(default_factory=get_current_time)
@@ -116,8 +156,6 @@ class Prompt(PromptBase):
         from_attributes = True
 
 
-# ============== Collection Models ==============
-
 class CollectionBase(BaseModel):
     """Base model for collection data validation.
     
@@ -126,7 +164,15 @@ class CollectionBase(BaseModel):
     
     Attributes:
         name: The name of the collection (1-100 characters).
-        description: Optional detailed description of the collection.
+        description: Optional detailed description of the collection (max 500 characters).
+        
+    Example:
+        >>> collection = CollectionBase(
+        ...     name="My Prompts",
+        ...     description="Collection of my favorite prompts"
+        ... )
+        >>> collection.name
+        'My Prompts'
     """
     name: str = Field(..., min_length=1, max_length=100)
     description: Optional[str] = Field(None, max_length=500)
@@ -140,6 +186,13 @@ class CollectionCreate(CollectionBase):
     
     This model ensures that required fields are provided and optional
     fields meet their constraints before database insertion.
+    
+    Example:
+        >>> collection_data = CollectionCreate(
+        ...     name="Programming Tips"
+        ... )
+        >>> collection_data.name
+        'Programming Tips'
     """
     pass
 
@@ -152,7 +205,18 @@ class Collection(CollectionBase):
     
     Attributes:
         id: Unique identifier auto-generated using UUID4.
-        created_at: Timestamp when the collection was first created.
+        created_at: Timestamp when the collection was first created (UTC).
+        name: The name of the collection (1-100 characters).
+        description: Optional detailed description of the collection (max 500 characters).
+        
+    Example:
+        >>> collection = Collection(
+        ...     name="Example Collection"
+        ... )
+        >>> len(collection.id) > 0
+        True
+        >>> isinstance(collection.created_at, datetime)
+        True
     """
     id: str = Field(default_factory=generate_id)
     created_at: datetime = Field(default_factory=get_current_time)
@@ -166,8 +230,6 @@ class Collection(CollectionBase):
         from_attributes = True
 
 
-# ============== Response Models ==============
-
 class PromptList(BaseModel):
     """Response model for listing prompts with pagination.
     
@@ -175,8 +237,18 @@ class PromptList(BaseModel):
     information for pagination support.
     
     Attributes:
-        prompts: List of Prompt objects.
+        prompts: List of Prompt objects returned from the query.
         total: Total number of prompts available (for pagination).
+        
+    Example:
+        >>> prompt_list = PromptList(
+        ...     prompts=[Prompt(title="Example", content="Content")],
+        ...     total=1
+        ... )
+        >>> len(prompt_list.prompts)
+        1
+        >>> prompt_list.total
+        1
     """
     prompts: List[Prompt]
     total: int
@@ -189,8 +261,18 @@ class CollectionList(BaseModel):
     count information for pagination support.
     
     Attributes:
-        collections: List of Collection objects.
+        collections: List of Collection objects returned from the query.
         total: Total number of collections available (for pagination).
+        
+    Example:
+        >>> collection_list = CollectionList(
+        ...     collections=[Collection(name="Test")],
+        ...     total=1
+        ... )
+        >>> len(collection_list.collections)
+        1
+        >>> collection_list.total
+        1
     """
     collections: List[Collection]
     total: int
@@ -203,8 +285,18 @@ class HealthResponse(BaseModel):
     the /health endpoint.
     
     Attributes:
-        status: String indicator of API health (e.g., "healthy").
-        version: Version string of the running application.
+        status: String indicator of API health (e.g., "healthy", "ok").
+        version: Version string of the running application (e.g., "1.0.0").
+        
+    Example:
+        >>> health = HealthResponse(
+        ...     status="healthy",
+        ...     version="1.0.0"
+        ... )
+        >>> health.status
+        'healthy'
+        >>> health.version
+        '1.0.0'
     """
     status: str
     version: str

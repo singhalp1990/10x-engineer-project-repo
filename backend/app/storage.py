@@ -1,12 +1,3 @@
-"""In-memory storage for PromptLab
-
-This module provides simple in-memory storage for prompts and collections.
-In a production environment, this would be replaced with a database.
-"""
-
-from typing import Dict, List, Optional
-from app.models import Prompt, Collection
-
 
 class Storage:
     def __init__(self):
@@ -63,7 +54,3 @@ class Storage:
     def clear(self):
         self._prompts.clear()
         self._collections.clear()
-
-
-# Global storage instance
-storage = Storage()
